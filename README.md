@@ -1,182 +1,283 @@
-# Enterprise IT Support Agentic RAG Copilot
+# Documind – Enterprise Document Intelligence
 
-An end-to-end **ML project** that turns a notebook-style Agentic RAG workflow into a deployable internal product using **LangGraph, FastAPI, Pinecone, Groq, Tavily, HTML, CSS, and JavaScript**.
+An end-to-end **Machine Learning and Agentic RAG project** that transforms enterprise document management into an intelligent document intelligence system using **LangGraph, FastAPI, Ollama, ChromaDB, PyTorch, SQLite, HTML, CSS, and JavaScript**.
 
 ---
 
 ## 1. Business Problem
 
 ### Customer
+
 **NovaRetail**, a fictional 3,000-employee retail company.
 
 ### Problem
-The internal IT team maintains many documents: VPN instructions, password rules, MFA policy, software installation rules, laptop troubleshooting guides, and service-desk runbooks.
 
-Employees still create repetitive support tickets because:
+The organization maintains a large collection of internal documents, including IT handbooks, VPN instructions, password policies, MFA guidelines, software installation procedures, laptop troubleshooting guides, and service-desk runbooks.
 
-- They do not know where the correct document is.
-- Traditional keyword search returns too many results.
-- A normal chatbot may hallucinate an answer.
-- Internal documents can be incomplete or outdated.
-- Some questions require current vendor information from the public web.
+Employees and support teams face challenges when working with this information because:
+
+- They do not always know where the relevant document is located.
+- Traditional keyword search may return irrelevant results.
+- Manual document comparison is time-consuming.
+- Different versions of the same policy may contain conflicting information.
+- Information distributed across multiple documents is difficult to verify.
+- General-purpose chatbots may generate answers without sufficient supporting evidence.
 
 ### Example
+
 An employee asks:
 
-> **“How do I connect to the company VPN from home?”**
+> **"How do I connect to the company VPN from home?"**
 
-The answer exists in the private company KB, so the system should **not search the public internet**.
+The answer exists in the internal company knowledge base. The system should retrieve the relevant document content and generate an answer grounded in that information.
 
-Another employee asks:
+Another example:
 
-> **“What is the latest Microsoft Teams outage guidance?”**
+> **"What changed between the previous and current VPN policy?"**
 
-The internal KB may not contain current outage information. The system should recognize weak private evidence, use an external search, grade that evidence, and answer with an external-source warning.
+The system should compare the selected document versions and identify added, deleted, modified, and unchanged content.
+
+A further example:
+
+> **"Do two company policies contain contradictory MFA requirements?"**
+
+The system should extract relevant statements from the selected documents, generate statement-pair features, and use a trained ANN model to identify potentially contradictory, consistent, or uncertain relationships.
 
 ### Business Goal
-Build a secure IT Support Copilot that:
 
-1. Searches trusted private knowledge first.
-2. Checks whether retrieved evidence is good enough.
-3. Uses web search only when private knowledge is insufficient.
-4. Rewrites weak queries and retries.
-5. Generates grounded answers.
-6. Shows the decision path for transparency and debugging.
-7. Lets authorized staff add new company documents.
+Build an intelligent enterprise document assistant that:
+
+1. Processes and indexes internal documents.
+2. Retrieves relevant information using semantic search.
+3. Generates context-aware answers using a locally running LLM.
+4. Maintains document versions and historical records.
+5. Identifies changes between document versions.
+6. Detects potentially contradictory or consistent statements across documents.
+7. Provides traceability through source information and audit records.
+8. Supports human review of machine learning predictions.
 
 ---
 
 ## 2. Why This Is an ML Project
 
-A ML Engineer does more than create an LLM. The ML must turn the customer's problem into a usable product.
+A Machine Learning Engineer does more than develop a model. The objective is to transform a business problem into a usable intelligent application.
+
+This project demonstrates the integration of machine learning with software engineering and application development.
 
 ```text
 Customer Problem
-      ↓
-Discovery & Requirements
-      ↓
+      |
+      v
+Problem Identification
+      |
+      v
+Requirements Analysis
+      |
+      v
 Solution Architecture
-      ↓
-Data / Knowledge Integration
-      ↓
-Agentic RAG Development
-      ↓
+      |
+      v
+Data Collection and Preprocessing
+      |
+      v
+Feature Engineering
+      |
+      v
+Machine Learning Model Development
+      |
+      v
+Agentic RAG Integration
+      |
+      v
 API Development
-      ↓
+      |
+      v
 User Interface
-      ↓
-Security + Audit + Testing
-      ↓
-Deployment
-      ↓
-Observe + Improve
+      |
+      v
+Security and Testing
+      |
+      v
+Application Validation
+      |
+      v
+Observe and Improve
 ```
 
-This repository demonstrates each layer.
+The repository demonstrates the following ML engineering components:
+
+- Document data ingestion and preprocessing.
+- Text chunking and embedding generation.
+- Semantic information retrieval.
+- Agent workflow orchestration.
+- ANN model development and inference.
+- Statement-pair feature engineering.
+- Document version comparison.
+- Cross-document verification.
+- API and frontend integration.
+- Automated testing and validation.
 
 ---
 
 ## 3. Simple Architecture
 
 ```text
-                   ┌─────────────────────┐
-                   │   Employee / User   │
-                   └──────────┬──────────┘
-                              │
-                              ▼
-                   ┌─────────────────────┐
-                   │ HTML/CSS/JavaScript │
-                   │      Web UI         │
-                   └──────────┬──────────┘
-                              │ POST /api/chat
-                              ▼
-                   ┌─────────────────────┐
-                   │       FastAPI       │
-                   └──────────┬──────────┘
-                              │
-                              ▼
-                   ┌─────────────────────┐
-                   │     LangGraph       │
-                   │ Agentic RAG Control │
-                   └──────────┬──────────┘
-                              │
-               ┌──────────────┴──────────────┐
-               │                             │
-               ▼                             ▼
-       ┌───────────────┐              ┌──────────────┐
-       │ Private KB    │              │ Tavily Web   │
-       │ Pinecone      │              │ Search       │
-       └───────┬───────┘              └──────┬───────┘
-               │                             │
-               └──────────────┬──────────────┘
-                              ▼
-                     ┌────────────────┐
-                     │ Groq LLM       │
-                     │ Grounded Answer│
-                     └────────────────┘
+                  +----------------------+
+                  |    Employee / User   |
+                  +----------+-----------+
+                             |
+                             v
+                  +----------------------+
+                  |   HTML / CSS / JS    |
+                  |      Web UI          |
+                  +----------+-----------+
+                             |
+                             | HTTP Requests
+                             v
+                  +----------------------+
+                  |       FastAPI        |
+                  |     Application      |
+                  +----------+-----------+
+                             |
+              +--------------+--------------+
+              |              |              |
+              v              v              v
+       +-------------+ +-------------+ +-------------+
+       |  Agentic    | |  Document   | |  Document   |
+       |  RAG        | |  Management | |  Intelligence|
+       +------+------+ +------+------+ +------+------+
+              |               |               |
+              v               v               v
+       +-------------+ +-------------+ +-------------+
+       |  LangGraph  | |   SQLite    | | Change      |
+       |  Workflow   | |  Registry   | | Detection   |
+       +------+------+ +-------------+ +-------------+
+              |
+       +------+----------------+
+       |                       |
+       v                       v
++--------------+       +----------------+
+| Ollama       |       | ChromaDB        |
+| Local LLM    |       | Vector Store    |
++--------------+       +----------------+
+                               |
+                               v
+                       +---------------+
+                       | Local         |
+                       | Embeddings    |
+                       +---------------+
+
+              CROSS-DOCUMENT VERIFICATION
+                          |
+                          v
+                 +-------------------+
+                 | Statement         |
+                 | Extraction        |
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 | Feature Engineering|
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 | Trained ANN Model |
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 | Verification      |
+                 | Findings          |
+                 +---------+---------+
+                           |
+                           v
+                 +-------------------+
+                 | Human Review      |
+                 +-------------------+
 ```
 
 ---
 
 ## 4. Agentic RAG Workflow
 
-This follows the same core implementation pattern as the reference notebook.
+The Agentic RAG component uses LangGraph to coordinate question processing, retrieval, and response generation.
+
+### Workflow
 
 ```text
-Question
-   ↓
-[1] Route Question
-   ├── Greeting / simple chat ─────────────→ Direct Answer
-   │
-   └── IT support question
-                ↓
-[2] Retrieve from Private Pinecone KB
-                ↓
-[3] Grade Private Evidence
-       ┌────────┴────────┐
-       │                 │
-     GOOD               WEAK
-       │                 │
-       ▼                 ▼
-Generate from KB    [4] Tavily Web Search
-                         ↓
-                  [5] Grade Web Evidence
-                    ┌────┴─────┐
-                    │          │
-                  GOOD        WEAK
-                    │          │
-                    ▼          ▼
-              Generate Web  [6] Rewrite Query
-                               ↓
-                         Retry Private KB
-                               ↓
-                        Max retry reached?
-                               ↓
-                    Insufficient Evidence
+User Question
+      |
+      v
+[1] Query Processing
+      |
+      v
+[2] Intent Routing
+      |
+      +-----------------------------+
+      |                             |
+      v                             v
+ Direct Conversation          IT Support Question
+      |                             |
+      v                             v
+ Direct Response             [3] Document Retrieval
+                                    |
+                                    v
+                              ChromaDB Search
+                                    |
+                                    v
+                              Retrieved Context
+                                    |
+                                    v
+                              Local Ollama LLM
+                                    |
+                                    v
+                              Grounded Response
 ```
+
+The workflow is designed to coordinate different operations according to the user request.
+
+The broader LangGraph integration also supports document comparison and cross-document verification operations.
 
 ### Why Agentic?
 
-Normal RAG does approximately this:
-
-```text
-Question → Retrieve → Generate
-```
-
-This project makes decisions:
+A conventional RAG workflow generally follows:
 
 ```text
 Question
- → Route
- → Retrieve
- → Evaluate evidence
- → Choose KB or Web
- → Rewrite if needed
- → Retry
- → Generate grounded answer
+   |
+   v
+Retrieve Documents
+   |
+   v
+Generate Answer
 ```
 
-The system therefore controls **what to do next** based on its current state.
+An agentic workflow introduces state management, routing, and conditional execution:
+
+```text
+Question
+   |
+   v
+Intent Routing
+   |
+   v
+Select Workflow
+   |
+   v
+Retrieve / Process Documents
+   |
+   v
+Execute Relevant Operation
+   |
+   v
+Generate Result
+   |
+   v
+Return Response
+```
+
+This enables the application to coordinate multiple document intelligence operations rather than treating every user request as a simple question-answering task.
 
 ---
 
@@ -184,320 +285,374 @@ The system therefore controls **what to do next** based on its current state.
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| Agent workflow | LangGraph | Stateful routing and conditional decisions |
-| LLM | Groq | Routing, grading, rewriting, answer generation |
-| Embeddings | HuggingFace `all-MiniLM-L6-v2` | Local 384-dimensional embeddings |
-| Vector DB | Pinecone | Private enterprise knowledge base |
-| External search | Tavily | Fallback when company KB is insufficient |
+| Programming language | Python | Application and ML development |
+| Agent workflow | LangGraph | Stateful workflow orchestration |
+| LLM runtime | Ollama | Local language model execution |
+| LLM | Qwen 2.5 7B | Language generation and reasoning |
+| Embeddings | Nomic Embed Text | Local text embeddings |
+| Vector database | ChromaDB | Semantic document retrieval |
+| Machine Learning | PyTorch | ANN model development |
+| Feature engineering | Python / NumPy | Statement-pair feature generation |
 | API | FastAPI | Backend and REST endpoints |
-| Frontend | HTML/CSS/JavaScript | Employee-facing interface |
-| Audit | SQLite | Basic decision-path logging |
-| Packaging | Docker | Reproducible deployment |
+| Frontend | HTML / CSS / JavaScript | User-facing interface |
+| Database | SQLite | Document registry and audit records |
+| Testing | Pytest / unittest | Application and model testing |
+| Version control | Git / GitHub | Source code management |
+
+### Local AI Architecture
+
+The application uses local AI components instead of depending on paid external LLM API services.
+
+| Component | Model / Technology |
+|---|---|
+| Language model | `qwen2.5:7b` |
+| Embedding model | `nomic-embed-text` |
+| LLM runtime | Ollama |
+| Vector database | ChromaDB |
+
+The language model and embedding model are executed locally through Ollama. ChromaDB maintains the persistent vector collection used for semantic retrieval.
 
 ---
 
 ## 6. Project Structure
 
 ```text
-FDE_Agentic_RAG_IT_Copilot/
-│
-├── app/
-│   ├── api/
-│   │   └── routes.py              # Chat, health and ingestion APIs
-│   │
-│   ├── core/
-│   │   ├── config.py              # Environment configuration
-│   │   └── logging.py             # Logging configuration
-│   │
-│   ├── rag/
-│   │   ├── state.py               # LangGraph state + structured decisions
-│   │   ├── vectorstore.py         # Pinecone + embeddings
-│   │   └── workflow.py            # Complete Agentic RAG graph
-│   │
-│   ├── services/
-│   │   ├── audit.py               # SQLite query audit
-│   │   └── ingestion.py           # PDF/TXT/MD/DOCX loading + chunking
-│   │
-│   └── main.py                    # FastAPI application
-│
-├── data/
-│   └── sample_kb/
-│       ├── company_it_handbook.md
-│       └── service_desk_runbook.md
-│
-├── static/
-│   ├── css/style.css
-│   └── js/app.js
-│
-├── templates/
-│   └── index.html
-│
-├── tests/
-│   └── test_ingestion.py
-│
-├── uploads/
-├── .env.example
-├── Dockerfile
-├── ingest_sample_kb.py
-├── requirements.txt
-├── run.py
-└── README.md
+Documind-ML-Project/
+|
++-- app/
+|   +-- api/
+|   |   +-- routes.py
+|   |
+|   +-- core/
+|   |   +-- config.py
+|   |   +-- logging.py
+|   |   +-- security.py
+|   |
+|   +-- ml/
+|   |   +-- dataset.py
+|   |   +-- features.py
+|   |   +-- inference.py
+|   |   +-- model.py
+|   |   +-- train.py
+|   |
+|   +-- rag/
+|   |   +-- state.py
+|   |   +-- vectorstore.py
+|   |   +-- workflow.py
+|   |
+|   +-- services/
+|   |   +-- audit.py
+|   |   +-- change_detection.py
+|   |   +-- document_registry.py
+|   |   +-- ingestion.py
+|   |   +-- verification.py
+|   |
+|   +-- main.py
+|
++-- data/
+|   +-- sample_kb/
+|       +-- company_it_handbook.md
+|       +-- service_desk_runbook.md
+|
++-- docs/
+|
++-- static/
+|   +-- css/
+|   |   +-- style.css
+|   +-- js/
+|   |   +-- app.js
+|   +-- favicon.svg
+|
++-- templates/
+|   +-- index.html
+|
++-- tests/
+|
++-- scripts/
+|   +-- preflight.py
+|   +-- run_local_demo.py
+|
++-- Agentic-RAG-demo/
++-- .env.example
++-- .gitignore
++-- Dockerfile
++-- ingest_sample_kb.py
++-- requirements.txt
++-- run.py
++-- README.md
 ```
 
 ---
 
 ## 7. Setup
 
-### Step 1 — Create virtual environment
+### Prerequisites
+
+- Python 3.11 or later.
+- Ollama installed.
+- Git.
+- Recommended RAM: 16 GB or more for comfortable local execution with the 7B model.
+- Windows, macOS, or Linux environment.
+
+### Step 1 — Clone the repository
 
 ```bash
-python -m venv venv
+git clone https://github.com/Rehita06/Documind-ML-Project.git
+cd Documind-ML-Project
 ```
 
-Windows:
+### Step 2 — Create virtual environment
 
-```bash
-venv\Scripts\activate
+```powershell
+python -m venv .venv
 ```
 
-macOS/Linux:
+Windows PowerShell:
 
-```bash
-source venv/bin/activate
+```powershell
+.venv\Scripts\Activate.ps1
 ```
 
-### Step 2 — Install dependencies
+### Step 3 — Install dependencies
 
-```bash
+```powershell
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Step 3 — Configure environment
+### Step 4 — Install and configure Ollama
 
-Create a `.env` file in the project root directory with the following variables:
+Install Ollama and make sure the Ollama service is running.
 
-```env
-# LLM API Keys
-GROQ_API_KEY=your_groq_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here
+Download the required models:
 
-# External Search
-TAVILY_API_KEY=your_tavily_api_key_here
-
-# Vector Database (Pinecone)
-PINECONE_API_KEY=your_pinecone_api_key_here
-PINECONE_INDEX_NAME=fde-it-support-rag
-PINECONE_NAMESPACE=company-it-kb
-
-# LLM Models
-GROQ_MODEL=openai/gpt-oss-20b
-OPENAI_MODEL=gpt-4o-mini
-EMBEDDING_MODEL=text-embedding-3-small
-
-# Security
-ADMIN_API_KEY=change-me-in-production
-
-# Application Settings
-APP_ENV=development
+```powershell
+ollama pull qwen2.5:7b
+ollama pull nomic-embed-text
 ```
 
-#### Environment Variable Reference
+Verify the installed models:
 
-| Variable | Description | Example | Required |
-|---|---|---|---|
-| `GROQ_API_KEY` | API key for Groq LLM (routing, grading, generation) | `gsk_...` | ✅ Yes |
-| `OPENAI_API_KEY` | API key for OpenAI (embeddings and fallback LLM) | `sk-...` | ✅ Yes |
-| `TAVILY_API_KEY` | API key for Tavily web search | `tvly-...` | ✅ Yes |
-| `PINECONE_API_KEY` | API key for Pinecone vector database | `pckey-...` | ✅ Yes |
-| `PINECONE_INDEX_NAME` | Pinecone index name | `fde-it-support-rag` | ⚠️ Optional (default: `fde-it-support-rag`) |
-| `PINECONE_NAMESPACE` | Pinecone namespace for document isolation | `company-it-kb` | ⚠️ Optional (default: `company-it-kb`) |
-| `GROQ_MODEL` | Groq model identifier | `openai/gpt-oss-20b` | ⚠️ Optional (default: `openai/gpt-oss-20b`) |
-| `OPENAI_MODEL` | OpenAI model identifier | `gpt-4o-mini` | ⚠️ Optional (default: `gpt-4o-mini`) |
-| `EMBEDDING_MODEL` | Embedding model for vectorization | `text-embedding-3-small` | ⚠️ Optional (default: `text-embedding-3-small`) |
-| `ADMIN_API_KEY` | Secret key for admin endpoints (document ingestion) | `your-secure-key` | ⚠️ Optional (default: `change-me`) |
-| `APP_ENV` | Application environment | `development` or `production` | ⚠️ Optional (default: `development`) |
-
-**⚠️ Important Security Notes:**
-
-- Never commit `.env` to version control. Add it to `.gitignore`.
-- Change `ADMIN_API_KEY` to a secure random value in production.
-- Use environment variables instead of hardcoding secrets.
-- Restrict API key access to only the services that need them.
-
-### Step 4 — Load sample company knowledge
-
-```bash
-python ingest_sample_kb.py
+```powershell
+ollama list
 ```
 
-This demonstrates the RAG ingestion pipeline:
+### Step 5 — Configure environment
 
-```text
-Company Documents
-   ↓
-Load Documents
-   ↓
-Chunk Text
-   ↓
-HuggingFace Embeddings
-   ↓
-Pinecone Vector Database
+Create a local `.env` file in the project root using `.env.example` as a reference.
+
+Configure the required application settings, including a secure `ADMIN_API_KEY`.
+
+The `.env` file must remain local and should never be committed to version control.
+
+### Step 6 — Run the application
+
+```powershell
+uvicorn app.main:app --reload
 ```
 
-### Step 5 — Run the application
-
-```bash
-python run.py
-```
-
-Open:
+Open the application:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-FastAPI API docs:
+FastAPI API documentation:
 
 ```text
 http://127.0.0.1:8000/docs
+```
+
+Health endpoint:
+
+```text
+http://127.0.0.1:8000/api/health
 ```
 
 ---
 
 ## 8. Classroom Demo Scenarios
 
-### Demo A — Private KB Success
+### Demo A — Private Knowledge Retrieval
 
 Ask:
 
 > **How do I connect to the company VPN from home?**
 
-Expected path:
+Expected workflow:
 
 ```text
-Router → KB
-Private KB Retrieval
-KB Grade → GOOD
-Generate from Private KB
+User Question
+      |
+      v
+Intent Routing
+      |
+      v
+ChromaDB Retrieval
+      |
+      v
+Relevant IT Handbook Chunks
+      |
+      v
+Ollama Answer Generation
+      |
+      v
+Grounded Response
 ```
 
 Teaching point:
 
-> Trusted internal company knowledge is preferred. No public web call is necessary.
+> Semantic retrieval enables the system to identify relevant enterprise information based on meaning rather than relying exclusively on exact keyword matching.
 
----
-
-### Demo B — Company Policy Question
+### Demo B — Company Security Policy
 
 Ask:
 
 > **Can IT support ask me to share my MFA code?**
 
-The internal handbook says employees must never share passwords or MFA codes with support personnel.
+Expected behavior:
 
-Expected path:
+- Retrieve the relevant security policy.
+- Identify the supporting document content.
+- Generate an answer using the retrieved context.
+
+Teaching point:
+
+> RAG allows a language model to answer questions using organization-specific information that is not necessarily part of its original training data.
+
+### Demo C — Document Upload
+
+Upload a new company policy or service-desk document.
+
+Expected workflow:
 
 ```text
-Router → KB
-Private KB Retrieval
-KB Grade → GOOD
-Private KB Answer
+Document Upload
+      |
+      v
+File Validation
+      |
+      v
+Text Extraction
+      |
+      v
+Recursive Chunking
+      |
+      v
+Embedding Generation
+      |
+      v
+ChromaDB Indexing
+      |
+      v
+Available for Retrieval
 ```
 
 Teaching point:
 
-> RAG allows the model to answer using company-specific information it was never trained on.
+> New knowledge can be incorporated into the retrieval system without manually modifying the language model.
 
----
+### Demo D — Document Version Comparison
 
-### Demo C — External / Current Information
+Select two versions of the same logical document.
 
-Ask:
-
-> **What is the latest Microsoft Teams outage guidance?**
-
-Expected path when internal documents do not answer it:
+Expected workflow:
 
 ```text
-Router → KB
-Private KB Retrieval
-KB Grade → WEAK
-Tavily Search
-Web Grade → GOOD
-Web Answer
+Select Old Version
+        |
+        v
+Select New Version
+        |
+        v
+Text Extraction
+        |
+        v
+Content Alignment
+        |
+        v
+Change Classification
+        |
+        v
+Comparison Report
 ```
 
 Teaching point:
 
-> Agentic RAG can choose another information source rather than blindly answering from irrelevant vectors.
+> Document version comparison helps identify changes between historical and current enterprise policies.
 
----
+### Demo E — Cross-Document Verification
 
-### Demo D — Query Rewrite
+Select document versions belonging to different logical documents.
 
-Ask a deliberately vague question such as:
-
-> **My work communication app is acting strange after the new update. What should I do?**
-
-If both KB and first external retrieval are weak, the workflow can rewrite the query and retry.
-
-Teaching point:
-
-> Retrieval failure does not immediately mean failure. An agent can improve the search query and try again while using a retry guard to avoid loops.
-
----
-
-### Demo E — Direct Conversation
-
-Ask:
-
-> **Hello!**
-
-Expected path:
+Expected workflow:
 
 ```text
-Router → DIRECT
-Direct Answer
+Selected Document Versions
+          |
+          v
+Statement Extraction
+          |
+          v
+Candidate Pair Generation
+          |
+          v
+Feature Engineering
+          |
+          v
+Trained ANN Inference
+          |
+          v
+CONTRADICTION / CONSISTENT / UNCERTAIN
+          |
+          v
+Human Review
 ```
 
 Teaching point:
 
-> Not every message should trigger expensive vector search or web search.
+> Machine Learning can assist in identifying potentially conflicting statements across multiple enterprise documents, while human review remains important for final interpretation.
 
 ---
 
-## 9. Document Upload Demo
+## 9. Document Upload and Ingestion
 
-The sidebar contains **Add Company Document**.
+The application provides an administrator-facing document upload workflow.
 
-Use the `ADMIN_API_KEY` from `.env`.
-
-Upload one of:
+Supported file formats:
 
 - `.pdf`
 - `.txt`
 - `.md`
 - `.docx`
 
-The backend performs:
+The ingestion pipeline performs:
 
 ```text
 Upload
-  ↓
-Validate Type
-  ↓
-Load Text
-  ↓
+  |
+  v
+Validate File Type
+  |
+  v
+Extract Text
+  |
+  v
 Recursive Chunking
-  ↓
-Embeddings
-  ↓
-Pinecone Indexing
-  ↓
-Immediately Available for Retrieval
+  |
+  v
+Generate Embeddings
+  |
+  v
+Store Vectors in ChromaDB
+  |
+  v
+Available for Semantic Retrieval
 ```
 
-This is useful in an FDE demonstration because the customer does not want to edit Python every time a new policy is published.
+The administrator must provide the configured `ADMIN_API_KEY` when using protected document-management operations.
+
+This workflow allows new enterprise knowledge to be added without modifying the application source code.
 
 ---
 
@@ -505,11 +660,13 @@ This is useful in an FDE demonstration because the customer does not want to edi
 
 ### `GET /api/health`
 
-Health check.
+Checks application health and availability.
 
 ### `POST /api/chat`
 
-Request:
+Processes a user question through the application workflow.
+
+Example request:
 
 ```json
 {
@@ -517,266 +674,375 @@ Request:
 }
 ```
 
-Response contains:
-
-```json
-{
-  "answer": "...",
-  "source_used": "private_kb",
-  "trace": [
-    "Router → KB",
-    "Private KB retrieval → 4 chunks",
-    "KB evidence grade → GOOD",
-    "Answer generation → PRIVATE KB"
-  ],
-  "citations": []
-}
-```
+The response includes the generated answer and available workflow information, such as source information and execution trace.
 
 ### `POST /api/ingest`
 
-Protected by the `X-Admin-Key` request header.
+Uploads and ingests a document.
 
-Uploads a document and adds its chunks to Pinecone.
+Protected using the `X-Admin-Key` request header.
+
+### Document Management Endpoints
+
+The document management functionality includes:
+
+- `GET /api/documents` — list logical documents.
+- `GET /api/documents/{document_id}/versions` — list document versions.
+- `POST /api/documents/{document_id}/retire` — retire a document from ordinary retrieval.
+
+### Document Intelligence Operations
+
+The application also exposes document comparison and cross-document verification functionality through authenticated API operations.
+
+Refer to the API implementation and `docs/api-frontend.md` for the available request and response contracts.
 
 ---
 
+## 11. Immutable Document Versions (Phase 2)
 
+The document registry maintains logical documents and their immutable versions in SQLite.
 
-## 11. Immutable document versions (Phase 2)
+Each version includes:
 
-The API now registers each uploaded file as a logical document with immutable
-versions in SQLite. Each version has a UUID, monotonically increasing version
-number, SHA-256 hash, generated storage path, upload timestamp and ingestion
-status. Re-uploading identical bytes under the same logical name returns the
-existing version instead of indexing a duplicate.
+- UUID-based version identifier.
+- Monotonically increasing version number.
+- SHA-256 content hash.
+- Generated storage path.
+- Upload timestamp.
+- Ingestion status.
 
-A changed upload is staged as `pending`; it becomes active only after chunk
-embedding/indexing and registry metadata persistence succeed. If ingestion
-fails, the prior active version remains active. Historical files and vector
-records are retained.
+Re-uploading identical file content under the same logical document name is handled through duplicate detection.
 
-The registry defaults to `data/document_registry.db`. New uploads are stored
-under UUID-generated subdirectories in `uploads/`; the original filename is
-display metadata only. The default upload limit is 25 MiB and can be configured
-with `MAX_UPLOAD_BYTES`. The API checks supported extensions and basic PDF,
-DOCX and UTF-8 text content signatures.
+Changed uploads are staged before becoming active. The previous active version is retained if the new ingestion operation fails.
 
-Admin endpoints:
+Historical document versions and their associated records are retained.
 
-- `POST /api/ingest` — upload; optional multipart `logical_name` and
-  `effective_date` fields.
-- `GET /api/documents` — list logical documents.
-- `GET /api/documents/{document_id}/versions` — list immutable versions.
-- `POST /api/documents/{document_id}/retire` — soft-retire from ordinary
-  retrieval; historical files, versions and vectors are retained.
+The registry defaults to a local SQLite database under the `data/` directory.
 
-These endpoints use the `X-Admin-Key` header. Set a non-default
-`ADMIN_API_KEY` in `.env`. A placeholder-only `.env.example` is provided.
+Uploaded files are stored using generated UUID-based storage paths rather than relying on the original filename as a storage identifier.
 
-Normal RAG retrieval filters registry-managed vectors to active version IDs
-while retaining legacy vectors that predate version metadata. Version
-comparison and ANN verification are later phases and are not implemented here.
+The upload limit is configurable through `MAX_UPLOAD_BYTES`.
 
-## 12. Document change detection (Phase 3)
+Normal retrieval uses registry-managed active document versions while retaining support for legacy vectors where applicable.
 
-A comparison service is available for two retained version IDs. It runs exact
-text alignment first, then similarity alignment (configured sentence embeddings
-when available, otherwise a clearly labelled local lexical fallback with a lower
-method-specific default threshold). Reports
-classify units as `ADDED`, `DELETED`, `MODIFIED` or `UNCHANGED` and retain old/new
-text, section labels and source locations. A text modification is not itself
-reported as a contradiction.
+---
 
-See [docs/change-detection.md](docs/change-detection.md) for the service API,
-threshold behaviour, fixture details and current limitations. The HTTP compare endpoint and frontend were added in Phase 7; the Phase 3
-change-detection engine remains a separately tested Python service.
+## 12. Document Change Detection (Phase 3)
 
-## 13. ANN statement relationship model (Phase 4)
+The change detection service compares two retained versions of a logical document.
 
-Phase 4 adds a separately trained PyTorch MLP for classifying statement pairs
-from different IT policy documents as `CONTRADICTION`, `CONSISTENT`, or
-`UNCERTAIN`. It does not replace the OpenAI embeddings used by Pinecone and
-makes no decision about which policy is authoritative.
+The implementation performs exact text alignment first, followed by similarity-based alignment.
 
-The task-specific sentence encoder is a trainable, mean-pooled word-embedding
-model jointly optimized with the MLP. Pair features include both sentence
-vectors, absolute difference, element-wise product, cosine similarity, numeric
-or date mismatch, negation mismatch, token overlap and length ratio. Vocabulary
-and scalar normalization are fitted on training data only. Training uses a
-seeded, document-group-disjoint train/validation/test split, class-weighted loss,
-validation early stopping and validation-selected low-confidence threshold.
-A TF-IDF logistic-regression baseline is trained and evaluated alongside it.
+The comparison results classify content into:
 
-The 90-row dataset at `data/ann/enterprise_it_statement_pairs.jsonl` is a
-curated development seed set, **not independently human-reviewed**. Its held-out
-test metrics are diagnostics only and are not evidence of real-world enterprise
-accuracy. A human-reviewed domain test set remains required before production
-claims or deployment decisions. See [docs/model_card.md](docs/model_card.md) and
-[docs/evaluation.md](docs/evaluation.md).
+| Classification | Description |
+|---|---|
+| ADDED | Content present in the new version |
+| DELETED | Content present in the old version but absent in the new version |
+| MODIFIED | Content changed between versions |
+| UNCHANGED | Content retained across versions |
+
+The comparison report maintains old and new text, section information, and source locations where available.
+
+A text modification is not automatically treated as a contradiction.
+
+See [`docs/change-detection.md`](docs/change-detection.md) for implementation details and limitations.
+
+---
+
+## 13. ANN Statement Relationship Model (Phase 4)
+
+Phase 4 introduces a separately trained Artificial Neural Network for classifying statement relationships across enterprise policy documents.
+
+The model predicts three classes:
+
+- `CONTRADICTION`
+- `CONSISTENT`
+- `UNCERTAIN`
+
+It does not independently determine which document is authoritative.
+
+### Feature Engineering
+
+The model uses statement-pair representations and engineered features, including:
+
+- Sentence vector representations.
+- Absolute difference between statement vectors.
+- Element-wise vector products.
+- Cosine similarity.
+- Numeric or date mismatch.
+- Negation mismatch.
+- Token overlap.
+- Sentence length ratio.
+
+### Model Development
+
+The project includes:
+
+- A trainable sentence representation component.
+- A Multi-Layer Perceptron classifier.
+- A document-group-disjoint training, validation, and test split.
+- Class-weighted loss.
+- Validation-based early stopping.
+- Validation-selected confidence threshold.
+- TF-IDF logistic regression baseline.
+
+Vocabulary and scalar normalization are fitted using training data only.
+
+### Evaluation Considerations
+
+The included curated development dataset is a seed dataset and is not independently human-reviewed.
+
+Therefore, held-out evaluation metrics are development diagnostics rather than evidence of production-level enterprise accuracy.
+
+A larger independently reviewed dataset is required before making real-world accuracy claims.
+
+See [`docs/model_card.md`](docs/model_card.md) and [`docs/evaluation.md`](docs/evaluation.md).
 
 ### Train on Windows PowerShell
 
 ```powershell
-python -m pip install -r requirements.txt
 $env:PYTHONPATH = (Get-Location).Path
+
 python -m app.ml.train --dataset data/ann/enterprise_it_statement_pairs.jsonl --artifact-root artifacts/ann --seed 42 --embedding-dim 48 --hidden-dims 128,64 --dropout 0.20 --learning-rate 0.003 --batch-size 16 --epochs 120 --patience 18
 ```
 
-Artifacts are saved to a versioned directory under `artifacts/ann/`, which is
-ignored by Git. See `docs/evaluation.md` for the inference smoke test and test
-commands. Cross-document verification is implemented as a tested Python service in Phase 5. LangGraph routing was added in Phase 6 and user-facing API/UI integration in Phase 7.
+The trained artifacts are saved under the configured local artifact directory.
 
-
-## 14. Cross-document ANN verification service (Phase 5)
-
-Phase 5 adds `CrossDocumentVerificationService` in
-`app/services/verification.py`. It accepts explicitly selected immutable
-version IDs from at least two distinct logical documents, extracts
-source-locatable statements from the retained TXT/Markdown, DOCX or PDF files,
-ranks cross-document candidate pairs, and calls the trained ANN artifact.
-Each finding includes both source statements and document/version/page/section/
-location/chunk references where available, the ANN label, raw model label,
-per-class probabilities, confidence, model version and review flag.
-
-Runs and findings are persisted in the existing audit SQLite database in
-`verification_runs`, `statement_pairs` and `verification_audit`. Human review is
-append-only relative to the ANN result: `review_pair` stores a separate reviewer
-label, actor, notes and timestamp and never overwrites the model label. The service method itself does not authenticate reviewers; Phase 7 exposes it
-only through the admin-key-protected API layer. Reviewer identity remains a
-supplied audit label rather than federated identity proof.
-
-Candidate pairs are ranked by lexical Jaccard overlap before ANN inference. This
-ranking is only a compute-saving heuristic, not a contradiction classifier.
-Runs are explicitly marked `partial` when pair or statement limits truncate
-the selection. The current Phase 5 implementation reads selected immutable
-source files directly; it does not yet perform Pinecone similarity retrieval,
-LLM-based statement extraction, LangGraph routing or HTTP API/UI integration.
-See [docs/cross-document-verification.md](docs/cross-document-verification.md)
-for limits, Python usage and configuration.
-
-### Windows PowerShell smoke test
-
-After installing dependencies and configuring `.env`, set the Python path and
-run the tests. To invoke verification, pass two or more `version_id` values
-returned by the admin document-version listing to the Python service shown in
-`docs/cross-document-verification.md`. The service loads the saved ANN from
-`ANN_ARTIFACT_DIR` by default.
-
-```powershell
-$env:PYTHONPATH = (Get-Location).Path
-python -m unittest discover -s tests -v
-```
+Local ANN artifacts are excluded from the Git repository.
 
 ---
 
-## Phase 6 — Integrated LangGraph workflows
+## 14. Cross-Document ANN Verification Service (Phase 5)
 
-The existing RAG graph now has four intent routes while preserving its original
-private-KB-first behaviour:
+Phase 5 introduces the `CrossDocumentVerificationService` in:
 
-| Intent | Graph path | Result |
+`app/services/verification.py`
+
+The service accepts explicitly selected immutable document version identifiers from at least two distinct logical documents.
+
+It performs:
+
+1. Source document access.
+2. Statement extraction.
+3. Cross-document candidate pair generation.
+4. Candidate ranking.
+5. ANN inference.
+6. Finding generation.
+7. Audit persistence.
+
+Each finding can include:
+
+- Source statements.
+- Document and version identifiers.
+- Page, section, location, and chunk references where available.
+- ANN classification.
+- Class probabilities.
+- Confidence information.
+- Model version.
+- Human-review flag.
+
+### Human Review
+
+Human review decisions are stored separately from the original ANN prediction.
+
+The original model classification is not overwritten by reviewer feedback.
+
+This supports traceability and preserves the distinction between machine-generated predictions and human decisions.
+
+### Limitations
+
+Candidate ranking is a computational optimization and is not itself a contradiction classifier.
+
+Verification results should be treated as decision-support information rather than definitive policy judgments.
+
+See [`docs/cross-document-verification.md`](docs/cross-document-verification.md).
+
+---
+
+## 15. Integrated LangGraph Workflows (Phase 6)
+
+Phase 6 integrates the document intelligence operations into the LangGraph workflow.
+
+The supported intent categories include:
+
+| Intent | Operation | Purpose |
 |---|---|---|
-| `kb` | Private retrieval → evidence grade → grounded answer or Tavily fallback | Existing IT-support chat |
-| `direct` | Direct response | Greeting/casual chat |
-| `verify_documents` | Cross-document verification service → trained ANN | Evidence-backed statement-pair findings |
-| `compare_versions` | Version change-detection service | Added/deleted/modified/unchanged report |
+| `kb` | Document retrieval and answer generation | Enterprise question answering |
+| `direct` | Direct response | Greetings and casual conversation |
+| `verify_documents` | Cross-document verification | ANN-based statement relationship analysis |
+| `compare_versions` | Document change detection | Version comparison |
 
-For UI/API-driven operations, selected version IDs are passed explicitly to
-`ask()`; the LLM router does not invent document identifiers. If routing fails,
-the workflow safely defaults to the original private-KB route. See
-[`docs/langgraph-integration.md`](docs/langgraph-integration.md) for invocation,
-trace behaviour, limitations and examples.
+Selected document version identifiers are passed explicitly to the relevant operations.
+
+The workflow does not rely on the LLM to invent document identifiers.
+
+This integration allows the application to coordinate conversational and document intelligence operations through a common workflow architecture.
+
+See [`docs/langgraph-integration.md`](docs/langgraph-integration.md).
 
 ---
 
-## Phase 7 — Document intelligence API and frontend
+## 16. Document Intelligence API and Frontend (Phase 7)
 
-Phase 7 exposes document comparison and ANN verification through authenticated
-FastAPI endpoints and the **Document Intelligence** browser workspace. The API
-supports listing documents and versions, comparing two versions of the same
-logical document, starting cross-document verification, retrieving persisted
-reports, and recording separate human review decisions. All these endpoints
-require a configured non-default `X-Admin-Key`.
+Phase 7 exposes document comparison and cross-document verification through authenticated FastAPI endpoints and the Document Intelligence browser workspace.
 
-The browser workspace lets an administrator select versions, compare revision
-changes, run cross-document ANN verification, inspect source statements and
-probabilities, and save reviewer labels/notes. Reviewer decisions remain
-separate from the original ANN prediction. See
-[`docs/api-frontend.md`](docs/api-frontend.md) for endpoint contracts, example
-payloads, authentication and limitations.
+The interface supports:
 
-### Run locally
+- Document listing.
+- Document version selection.
+- Version comparison.
+- Cross-document ANN verification.
+- Inspection of verification findings.
+- Viewing statement-level information and probabilities.
+- Recording human review decisions.
+
+The browser interface provides an integrated way for administrators to access document intelligence operations without directly invoking Python services.
+
+Protected operations use the configured `X-Admin-Key`.
+
+See [`docs/api-frontend.md`](docs/api-frontend.md) for endpoint contracts, authentication, and implementation details.
+
+---
+
+## 17. End-to-End Validation, Security Review, and Reproducible Demo (Phase 8)
+
+Phase 8 focuses on end-to-end validation, security improvements, and reproducible local demonstration.
+
+The project includes automated tests for:
+
+- Document ingestion.
+- Immutable version creation.
+- Duplicate detection.
+- Version listing.
+- Document change detection.
+- ANN inference.
+- Verification report retrieval.
+- Human review.
+- API integration.
+- Vector-store safety.
+- Workflow integration.
+
+### Security Improvements
+
+The application includes:
+
+- Environment-based secret configuration.
+- Administrator-key-protected operations.
+- File validation.
+- Upload-size restrictions.
+- Security response headers.
+- Content Security Policy.
+- Audit logging.
+- Separate human review records.
+
+### Local Validation
+
+Run the automated test suite:
 
 ```powershell
-python -m pip install -r requirements.txt
-$env:PYTHONPATH = (Get-Location).Path
 python -m unittest discover -s tests -v
-uvicorn app.main:app --reload
 ```
 
-Configure `.env` with a non-default `ADMIN_API_KEY` and the required provider
-credentials before starting the application. API/UI route tests use local
-adapters; live provider connectivity must be verified in the target deployment.
-
----
-
-## Phase 8 — End-to-end validation, security review and reproducible demo
-
-Phase 8 adds HTTP-level integration coverage for the main document lifecycle:
-admin-authenticated upload, immutable version creation and duplicate detection,
-version listing, actual change-detection comparison, actual saved ANN inference,
-persisted report retrieval and human review. The new integration test uses
-FastAPI's `TestClient`, a temporary SQLite registry and upload directory, and
-the included trained ANN artifact. It does not substitute mock ANN predictions
-for the real saved model.
-
-The API now normalizes both Windows and POSIX upload path separators, strictly
-validates `effective_date`, validates human-review labels and reviewer names,
-and writes audit metadata for successful, duplicate and failed ingestion
-attempts. A security-header middleware adds a restrictive same-origin CSP,
-frame denial, MIME sniffing protection, referrer/permissions policies and
-`no-store` for API responses.
-
-### Reproducible offline demo
-
-The offline demo exercises document versioning, actual change detection and the
-real saved ANN without requiring OpenAI, Pinecone or Tavily credentials:
+Validate JavaScript syntax:
 
 ```powershell
-$env:PYTHONPATH = (Get-Location).Path
-python scripts/preflight.py
-python scripts/run_local_demo.py --output demo-output/phase8-report.json
-python -m unittest discover -s tests -v
 node --check static/js/app.js
+```
+
+Compile Python modules:
+
+```powershell
 python -m compileall -q app tests scripts
 ```
 
-The demo uses temporary local files/SQLite and cleans them up automatically.
-See [`docs/reproducible-demo.md`](docs/reproducible-demo.md) for the full flow,
-expected outputs and live application setup. See
-[`docs/security-review.md`](docs/security-review.md) for changes, residual
-risks and deployment boundaries.
+The application has also been manually tested for the main document intelligence workflows, including document upload, question answering, source retrieval, document comparison, and ANN verification.
 
-### Validation boundary
+### Validation Boundary
 
-The Phase 8 HTTP integration tests exercise real FastAPI route handling, the
-real document registry, real change detection and the included trained ANN
-artifact. The full `app.main` startup and external OpenAI/Pinecone/Tavily
-connections still require the pinned provider packages and valid local
-credentials. The current environment did not contain the LangGraph,
-LangChain-provider or Pinecone packages, and no live external-provider test is
-claimed. The ANN's seed labels remain engineer-curated and not independently
-human-reviewed; its held-out results are not production performance claims.
+The ANN development dataset is curated and not independently human-reviewed. Its evaluation results should not be presented as production performance claims.
 
-### Windows PowerShell live run
+Local execution depends on the required Ollama models, Python dependencies, and local application configuration.
 
-```powershell
-python -m pip install -r requirements.txt
-Copy-Item .env.example .env
-# Edit .env locally with valid credentials and a non-default ADMIN_API_KEY.
-$env:PYTHONPATH = (Get-Location).Path
-python scripts/preflight.py --strict
-python -m unittest discover -s tests -v
-uvicorn app.main:app --reload
-```
+See [`docs/reproducible-demo.md`](docs/reproducible-demo.md) and [`docs/security-review.md`](docs/security-review.md).
+
+---
+
+## 18. Security and Configuration
+
+The application uses local configuration and environment variables to manage sensitive settings.
+
+Important practices:
+
+- Never commit `.env` to version control.
+- Use a strong, non-default `ADMIN_API_KEY`.
+- Keep local database files outside the public source repository.
+- Keep local vector database data private.
+- Keep ANN model artifacts and local runtime files separate from source code.
+- Restrict administrative operations to authorized users.
+
+The application is designed for local execution and demonstration. Production deployment would require additional authentication, authorization, infrastructure, and security review.
+
+---
+
+## 19. Limitations and Future Enhancements
+
+### Current Limitations
+
+- Language model response quality depends on model capability and available hardware.
+- Semantic retrieval quality depends on document quality, chunking, and embedding performance.
+- ANN classification depends on the quality and diversity of the training data.
+- The seed dataset is not independently human-reviewed.
+- ANN predictions require human review before operational decisions.
+- Local model execution requires sufficient system resources.
+- The current setup is designed for local application execution rather than managed multi-user cloud deployment.
+
+### Future Enhancements
+
+1. Expand the enterprise document dataset.
+2. Introduce independently human-reviewed statement-pair datasets.
+3. Improve ANN model performance and evaluation.
+4. Enhance source citations and document-location references.
+5. Extend document format support.
+6. Implement role-based access control.
+7. Introduce document-level permissions.
+8. Improve retrieval evaluation and monitoring.
+9. Develop advanced document intelligence analytics.
+10. Explore scalable deployment infrastructure.
+
+---
+
+## 20. Conclusion
+
+Documind demonstrates the practical integration of Machine Learning, Agentic Retrieval-Augmented Generation, semantic search, and enterprise document intelligence.
+
+The project extends beyond conventional question-answering systems by combining document ingestion, local language models, semantic retrieval, immutable document versioning, change detection, and ANN-based cross-document verification.
+
+It demonstrates the application of ML engineering principles across data preprocessing, feature engineering, model development, workflow orchestration, API integration, frontend development, testing, and security.
+
+The resulting application provides a foundation for intelligent enterprise document management and evidence-assisted decision support.
+
+---
+
+## 21. Project Repository
+
+**Project Name:** Documind – Enterprise Document Intelligence
+
+**Project Domain:** Machine Learning / Artificial Intelligence / Natural Language Processing
+
+**Core Concepts:**
+
+- Agentic Retrieval-Augmented Generation
+- Local Large Language Models
+- Semantic Search
+- Vector Databases
+- Machine Learning
+- Artificial Neural Networks
+- Feature Engineering
+- Document Version Management
+- Document Change Detection
+- Cross-Document Verification
+
+**GitHub Repository:**
+
+https://github.com/Rehita06/Documind-ML-Project
