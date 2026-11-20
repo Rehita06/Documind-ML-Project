@@ -46,9 +46,9 @@ Build a secure IT Support Copilot that:
 
 ---
 
-## 2. Why This Is an FDE Project
+## 2. Why This Is an ML Project
 
-A Forward Deployed Engineer does more than create an LLM notebook. The FDE must turn the customer's problem into a usable product.
+A ML Engineer does more than create an LLM. The ML must turn the customer's problem into a usable product.
 
 ```text
 Customer Problem
