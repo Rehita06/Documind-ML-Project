@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080b16" />
+
+    <title>Documind | Enterprise Document Intelligence</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+
+<body>
+<div class="shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-icon">ML</div>
+            <div>
+               <div class="brand-name">DOCU<span>MIND</span></div>
+                <div class="brand-caption">INTELLIGENCE PLATFORM</div>
+            </div>
+        </div>
+
+        <div class="sidebar-label">WORKSPACE</div>
+
+        <div class="project-card">
+            <div class="project-icon">✦</div>
+            <div>
+                <strong>Enterprise ML</strong>
+                <span>Intelligence Copilot</span>
+            </div>
+            <span class="online-indicator"></span>
+        </div>
+
+        <div class="sidebar-label">ML WORKFLOW</div>
+
+        <div class="workflow-card">
+            <div class="workflow-heading">
+                <span>Processing pipeline</span>
+                <span class="pipeline-tag">LOCAL AI</span>
+            </div>
+
+            <div class="flow-step">
+                <span class="step-number">01</span>
+                <span>Query classification</span>
+            </div>
+
+            <div class="flow-step">
+                <span class="step-number">02</span>
+                <span>Vector retrieval</span>
+            </div>
+
+            <div class="flow-step">
+                <span class="step-number">03</span>
+                <span>Evidence evaluation</span>
+            </div>
+
+            <div class="flow-step">
+                <span class="step-number">04</span>
+                <span>ML verification</span>
+            </div>
+
+            <div class="flow-step">
+                <span class="step-number">05</span>
+                <span>Grounded generation</span>
+            </div>
+        </div>
+
+        <div class="sidebar-label">TOOLS</div>
+
+        <div class="sidebar-actions">
+            <button id="openUpload" class="secondary-btn">
+                <span>＋</span> Add Knowledge Document
+            </button>
+
+            <button id="openWorkspace" class="secondary-btn">
+                <span>▦</span> ML Document Intelligence
+            </button>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="footer-status"></div>
+            <div>
+                <strong>Local AI Environment</strong>
+                <span>Ollama · ChromaDB</span>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <header class="topbar">
+            <div class="topbar-title">
+                <span class="breadcrumb">WORKSPACE</span>
+                <span class="breadcrumb-divider">/</span>
+                <strong>AI Assistant</strong>
+            </div>
+
+            <div class="topbar-right">
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    Systems operational
+                </div>
+
+                <span class="pill">ML POWERED</span>
+                <div class="profile-avatar">AI</div>
+            </div>
+        </header>
+
+
+        <section class="dashboard-content">
+
+            <div class="welcome-section">
+                <div>
+                    <div class="eyebrow">
+                        <span class="eyebrow-line"></span>
+                        ENTERPRISE MACHINE LEARNING
+                    </div>
+
+                    <h1>Intelligence, <span>reimagined.</span></h1>
+
+                    <p>
+                        Explore enterprise knowledge, analyse documents,
+                        and discover intelligent insights powered by
+                        local machine learning.
+                    </p>
+                </div>
+
+                <div class="welcome-decoration">
+                    <div class="orb orb-one"></div>
+                    <div class="orb orb-two"></div>
+                    <div class="orb-core">ML</div>
+                </div>
+            </div>
+
+
+            <!-- METRIC CARDS -->
+            <div class="metrics-grid">
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span>AI ENGINE</span>
+                        <span class="metric-icon purple">✦</span>
+                    </div>
+                    <strong>Qwen 2.5</strong>
+                    <span class="metric-description">Local language model</span>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span>EMBEDDINGS</span>
+                        <span class="metric-icon cyan">⌘</span>
+                    </div>
+                    <strong>Nomic Embed</strong>
+                    <span class="metric-description">Semantic vector encoding</span>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span>VECTOR DATABASE</span>
+                        <span class="metric-icon blue">◈</span>
+                    </div>
+                    <strong>ChromaDB</strong>
+                    <span class="metric-description">Local knowledge retrieval</span>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span>ML ANALYSIS</span>
+                        <span class="metric-icon pink">⌁</span>
+                    </div>
+                    <strong>ANN Engine</strong>
+                    <span class="metric-description">Statement relationship analysis</span>
+                </div>
+
+            </div>
+
+
+            <!-- CHAT -->
+            <section class="chat-panel">
+
+                <div class="chat-panel-header">
+                    <div>
+                        <div class="panel-eyebrow">INTERACTIVE INTELLIGENCE</div>
+                        <h2>AI Knowledge Assistant</h2>
+                        <p>Ask questions using your enterprise knowledge base.</p>
+                    </div>
+
+                    <div class="assistant-badge">
+                        <span class="status-dot"></span>
+                        ONLINE
+                    </div>
+                </div>
+
+                <section id="chat" class="chat-area">
+                    <div class="message assistant">
+                        <div class="avatar">AI</div>
+                        <div class="bubble">
+                            <strong>Welcome to Enterprise ML Intelligence.</strong>
+                            <p>
+                                I can retrieve company knowledge, answer IT support
+                                questions, compare document versions, and help
+                                analyse policy relationships.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="composer-wrap">
+
+                    <div class="examples">
+                        <span class="suggestion-label">TRY ASKING</span>
+
+                        <button class="example">
+                            How do I connect to the company VPN?
+                        </button>
+
+                        <button class="example">
+                            What is our password reset policy?
+                        </button>
+
+                        <button class="example">
+                            Analyse a document contradiction
+                        </button>
+                    </div>
+
+                    <form id="chatForm" class="composer">
+                        <textarea
+                            id="question"
+                            rows="2"
+                            placeholder="Ask your enterprise AI assistant anything..."
+                            required
+                        ></textarea>
+
+                        <button type="submit" class="send-btn">
+                            <span>Ask AI</span>
+                            <span class="send-arrow">↗</span>
+                        </button>
+                    </form>
+
+                    <div class="composer-footer">
+                        <span>✦ Powered by local machine learning</span>
+                        <span>Your documents remain in your local environment</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- AGENT TRACE -->
+    <aside class="trace-panel">
+
+        <div class="trace-header">
+            <div class="panel-eyebrow">LIVE MONITORING</div>
+            <h2>ML Activity</h2>
+            <p>Follow the processing decisions made by the AI workflow.</p>
+        </div>
+
+        <div class="trace-summary">
+            <div class="trace-summary-icon">⌁</div>
+            <div>
+                <strong>Processing pipeline</strong>
+                <span>LangGraph orchestration</span>
+            </div>
+        </div>
+
+        <div id="trace" class="trace-list">
+            <div class="empty">Waiting for your first request...</div>
+        </div>
+
+        <div class="source-box">
+            <span>FINAL RESPONSE SOURCE</span>
+            <strong id="sourceUsed">—</strong>
+        </div>
+
+        <div class="trace-footer">
+            <span class="status-dot"></span>
+            Local inference environment
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- DOCUMENT UPLOAD MODAL -->
+<div id="uploadModal" class="modal hidden">
+    <div class="modal-card">
+
+        <div class="modal-head">
+            <div>
+                <div class="panel-eyebrow">KNOWLEDGE INGESTION</div>
+                <h2>Add Knowledge Document</h2>
+            </div>
+            <button id="closeUpload" aria-label="Close">×</button>
+        </div>
+
+        <p class="muted">
+            Upload PDF, TXT, Markdown, or DOCX files.
+            Documents are chunked, embedded locally, and indexed into ChromaDB.
+        </p>
+
+        <input
+            id="adminKey"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Admin API key"
+        />
+
+        <input
+            id="fileInput"
+            type="file"
+            accept=".pdf,.txt,.md,.docx"
+        />
+
+        <button id="uploadBtn" class="send-btn full">
+            Index Document
+        </button>
+
+        <div id="uploadStatus" class="upload-status"></div>
+
+    </div>
+</div>
+
+
+<!-- DOCUMENT INTELLIGENCE MODAL -->
+<div id="workspaceModal" class="modal hidden">
+    <div class="modal-card workspace-card">
+
+        <div class="modal-head">
+            <div>
+                <div class="panel-eyebrow">MACHINE LEARNING ANALYSIS</div>
+                <h2>Document Intelligence</h2>
+            </div>
+
+            <button id="closeWorkspace" aria-label="Close">×</button>
+        </div>
+
+        <p class="muted">
+            Manage retained document versions, compare revisions,
+            and inspect ANN findings across enterprise documents.
+        </p>
+
+        <div class="workspace-auth">
+            <label for="workspaceAdminKey">Admin API key</label>
+            <input
+                id="workspaceAdminKey"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Admin API key"
+            />
+        </div>
+
+        <div class="workspace-toolbar">
+            <button id="refreshDocuments" class="secondary-btn">
+                Refresh documents
+            </button>
+            <span id="workspaceStatus" class="upload-status" role="status">
+                Load documents to begin.
+            </span>
+        </div>
+
+        <section class="workspace-section">
+            <h3>Registered documents</h3>
+            <div id="documentList" class="document-list">
+                <div class="empty">Documents have not been loaded.</div>
+            </div>
+        </section>
+
+        <section class="workspace-section">
+            <h3>Document version comparison</h3>
+
+            <div class="workspace-grid">
+                <label>
+                    Document
+                    <select id="compareDocument">
+                        <option value="">Choose a document</option>
+                    </select>
+                </label>
+
+                <label>
+                    Older version
+                    <select id="oldVersion">
+                        <option value="">Choose version</option>
+                    </select>
+                </label>
+
+                <label>
+                    Newer version
+                    <select id="newVersion">
+                        <option value="">Choose version</option>
+                    </select>
+                </label>
+            </div>
+
+            <button id="compareBtn" class="send-btn">
+                Compare versions
+            </button>
+
+            <div id="comparisonResults" class="results-area"></div>
+        </section>
+
+        <section class="workspace-section">
+            <h3>ANN cross-document verification</h3>
+
+            <p class="muted">
+                Select one ingested version from at least two different
+                logical documents to analyse statement relationships.
+            </p>
+
+            <button id="verifyBtn" class="send-btn">
+                Verify selected documents
+            </button>
+
+            <div id="verificationResults" class="results-area"></div>
+        </section>
+
+    </div>
+</div>
+
+
+<script src="/static/js/app.js"></script>
+
+</body>
+</html>
